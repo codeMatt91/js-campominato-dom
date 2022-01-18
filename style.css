@@ -10,13 +10,22 @@
 #grid {
   display: flex;
   flex-wrap: wrap;
-  background-color: white;
+  width: 500px;
+  height: 500px;
 }
 
 .cell {
+  background-color: white;
   border: 1px solid black;
 }
 
+.safe {
+  background-color: dodgerblue;
+}
+
+.bomb {
+  background-color: firebrick;
+}
 button {
   border: 1px solid black;
   padding: 5px 5px;

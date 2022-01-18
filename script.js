@@ -17,24 +17,134 @@ BONUS:
 
 */
 
-const generateButton = document.getElementById('generate');
+//* FUNZIONI DA UTILIZZARE
 
-const start = () => {
-   
-   generateButton.innerText = 'Ricomincia';
-   const grid = document.getElementById('grid');
-   grid.innerText = '';
+const getRandomNumber = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
-   let point = 0;
-   const bombNumber = 16;
-   // ! Valore scelto dall'utente 
-   const choose = document.getElementById('select').value;
 
-   switch (choose) {
-      case ('level1') {
+// RECUPERO LA GRIGLIA
+const select = document.getElementById("select");
+const grid = document.getElementById("grid");
+const button = document.getElementById("generate");
 
-      }
-   }
+function start() {
+    // Cambio il tasto del bottone e lo chiamo ricomincia
+    button.innerText = 'RESTART'
+
+    grid.innerHTML = '';
+    grid.style.display = 'flex';
+
+    // Preparo quello che mi serve per il gioco 
+    let attempts = 0;
+    const totalBombs = 16;
+
+    let columns;
+
+    switch (select.value) {
+        case "level2":
+            columns = 9;
+            break;
+        case "level3":
+            columns = 7;
+            break;
+        default:
+            columns = 10;
+            break;
+    }
+
+    const totalCells = columns * columns;
+
+    const maxAttempts = totalCells - totalBombs;
+
+
+    // GENERO UNA BOMBA
+    const generateBombs = (totalBombs, totalNumber) => {
+        const bombs = [];
+        while (bombs.length < totalBombs) { // il numero di bombe è inferiore a 16
+            const randNumber = getRandomNumber(1, totalNumber);
+            if (!bombs.includes(randNumber)) { // Controllo se c'è nell'array di bombe
+                bombs.push(randNumber);
+            }
+        }
+        return bombs;
+    }
+
+    // GENERO LA GRIGLIA
+    const generateGrid = (cellsNumber, cellsPerRow, bombs) => {
+        for (let i = 1; i <= cellsNumber; i++) {
+            const cell = createCell(i, cellsPerRow);
+            cell.addEventListener('click', (event) => onCellClick(event.target, bombs, i));
+            grid.appendChild(cell);
+        }
+    }
+
+    // CREO LA CELLA
+    function createCell(cellNumber, cellsPerRow) {
+        const cell = document.createElement("div");
+        cell.className = "cell";
+        cell.innerText = cellNumber;
+        const wh = `calc(100% / ${cellsPerRow})`;
+        cell.style.height = wh;
+        cell.style.width = wh;
+        return cell;
+    }
+
+    // Gestisco l'evento al click
+    function onCellClick(clickedCell, bombs, number) {
+        clickedCell.removeEventListener("click", onCellClick);
+        console.log('ciao');
+
+        // Controllo se è una bomba
+        if (bombs.includes(number)) {
+            gameOver(bombs, attempts, true);
+        } else {
+            clickedCell.classList.add("safe")
+            attempts++;
+            if (attempts === maxAttempts) {
+                gameOver(bombs, attempts, false);
+            }
+        }
+    }
+
+    // FINE PARTITA
+    const gameOver = (bombs, attempts, hasLost) => {
+        const allCells = grid.querySelectorAll('.cell');
+
+        for (let i = 0; i < allCells.length; i++) {
+            allCells[i].removeEventListener('click', onCellClick);
+        }
+
+        showBoms(bombs);
+
+        const message = document.createElement('h2');
+        message.className = 'message';
+
+        const messageText = hasLost ? `HAI PERSO, RIPROVA (questo è il tuo punteggio ${attempts})` : `HAI VINTO!!!!!!!!`
+        message.innerText = messageText;
+        grid.appendChild(message);
+
+
+
+    }
+
+    const showBoms = (bombs) => {
+        const cells = document.querySelectorAll('.cell');
+        for (let i = 0; i < totalCells; i++) {
+            const cell = cells[i];
+            const cellNumber = parseInt(cell.innerText);
+            if (bombs.includes(cellNumber)) {
+                cell.classList.add('bomb');
+            }
+        }
+    }
+
+
+    // Esecuzione
+
+    const bombs = generateBombs(totalBombs, totalCells)
+    console.log(bombs);
+
+    generateGrid(totalCells, columns, bombs);
 }
 
-generateButton.addEventListener('click', start);
+button.addEventListener("click", () => start());
