@@ -92,7 +92,7 @@ function start() {
     // Gestisco l'evento al click
     function onCellClick(clickedCell, bombs, number) {
         clickedCell.removeEventListener("click", onCellClick);
-        console.log('ciao');
+        
 
         // Controllo se è una bomba
         if (bombs.includes(number)) {
@@ -138,8 +138,6 @@ function start() {
         }
     }
 
-
-    // Esecuzione
 
     const bombs = generateBombs(totalBombs, totalCells)
     console.log(bombs);
