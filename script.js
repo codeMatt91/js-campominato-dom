@@ -56,7 +56,20 @@ function start() {
 
     const maxAttempts = totalCells - totalBombs;
 
+    
+    // # DICHIARAZIONE DELLE FUNZIONI 
 
+    // GENERO UNA FUNZIONE CHE RIMUOVE TUTTI GLI EVENTLISTNER
+
+    const disableCell = cell => {
+        const clone = cell.cloneNode(); //! .cloneNode() copia l'ememnto senza nulla dentro
+        clone.innerText = cell.innerText;
+        clone.classList.add('disabled');
+        cell.parentNode.replaceChild(clone, cell);
+
+        return clone;
+    }
+    
     // GENERO UNA BOMBA
     const generateBombs = (totalBombs, totalNumber) => {
         const bombs = [];
@@ -91,14 +104,14 @@ function start() {
 
     // Gestisco l'evento al click
     function onCellClick(clickedCell, bombs, number) {
-        clickedCell.removeEventListener("click", onCellClick);
-        
+        // clickedCell.removeEventListener("click", onCellClick);
+        const disabledCell = disableCell(clickedCell);
 
         // Controllo se è una bomba
         if (bombs.includes(number)) {
             gameOver(bombs, attempts, true);
         } else {
-            clickedCell.classList.add("safe")
+            disabledCell.classList.add("safe")
             attempts++;
             if (attempts === maxAttempts) {
                 gameOver(bombs, attempts, false);
@@ -131,9 +144,10 @@ function start() {
         const cells = document.querySelectorAll('.cell');
         for (let i = 0; i < totalCells; i++) {
             const cell = cells[i];
-            const cellNumber = parseInt(cell.innerText);
+            const disabledCell = disableCell(cell);
+            const cellNumber = parseInt(disabledCell.innerText);
             if (bombs.includes(cellNumber)) {
-                cell.classList.add('bomb');
+                disabledCell.classList.add('bomb');
             }
         }
     }

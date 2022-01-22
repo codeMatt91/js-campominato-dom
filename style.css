@@ -15,18 +15,24 @@
 }
 
 .cell {
+  cursor: pointer;
   background-color: white;
   border: 1px solid black;
 }
 
-.safe {
+.cell.safe {
   background-color: dodgerblue;
+  cursor: not-allowed;
 }
 
-.bomb {
+.cell.bomb {
+  cursor: not-allowed;
   background-color: firebrick;
 }
 button {
   border: 1px solid black;
   padding: 5px 5px;
+}
+.disabled {
+  cursor: not-allowed;
 }
